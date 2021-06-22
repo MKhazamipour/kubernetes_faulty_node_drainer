@@ -1,21 +1,16 @@
 import subprocess
 import os
 
+from server_list import get_server_list
+
 kubeconfig_file = os.getenv('kube_config_path')
 
+faulty_servers = get_server_list()
 
-def get_server_list():
-    servers = []
-    with open('servers.txt', 'r') as servers_to_check:
-        for lines in servers_to_check:
-            servers.append(lines.strip())
-        return servers
-
-
-def cordon_faulty_servers(bad_server):
-    for i in range(len(bad_server)):
+def cordon_faulty_servers(sv):
+    for i in range(len(sv)):
         node_drain = subprocess.run(
-                     ['kubectl', '--kubeconfig', kubeconfig_file, 'drain', bad_server[i],'--force', '--grace-period=0','--ignore-daemonsets','--delete-local-data'],
+                     ['kubectl', '--kubeconfig', kubeconfig_file, 'drain', sv[i],'--force', '--grace-period=0','--ignore-daemonsets','--delete-local-data'],
                      stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE
                                     )
@@ -24,4 +19,4 @@ def cordon_faulty_servers(bad_server):
         i +=1
 
 
-cordon_faulty_servers(get_server_list())
+cordon_faulty_servers(faulty_servers)
