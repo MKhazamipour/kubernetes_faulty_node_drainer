@@ -1,0 +1,6 @@
+openstacksdk
+python-cinderclient
+python-debian
+python-keystoneclient
+python-novaclient
+python-openstackclient
